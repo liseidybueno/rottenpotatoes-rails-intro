@@ -4,17 +4,27 @@ class MoviesController < ApplicationController
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
+    #@movies = 
   end
 
   def index
-    @all_ratings = Movie.all_ratings
     if params[:ratings].nil?
-      @ratings_to_show = []
+      @ratings_to_show = Movie.all_ratings
     else
       @ratings_to_show = params[:ratings].keys
     end
-    @movies = Movie.with_ratings(@ratings_to_show)
+    @all_ratings = Movie.all_ratings
+    @movies = Movie.with_ratings(@ratings_to_show).order(params[:sort])
+    @sort = params[:sort]
+    if @sort === 'title'
+      @css_title = 'hilite'
+      @movies = Movie.with_ratings(@ratings_to_show).order(params[:sort])
+    elsif @sort === 'release_date'
+      @css_rating = 'hilite'
+      @movies = Movie.with_ratings(@ratings_to_show).order(params[:sort])
+    end
     
+    @ratings_to_show_sort = @ratings_to_show.map{|rating|[rating,1]}.to_h
   end
 
   def new
