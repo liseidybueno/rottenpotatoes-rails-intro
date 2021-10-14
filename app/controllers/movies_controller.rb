@@ -9,12 +9,12 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     #checkbox logic goes here
-    if params[:ratings].nil?
-      selected_ratings = @all_ratings
-    else
-      selected_ratings = params[:ratings].keys
-    end
-    @movie = Movie.with_ratings(selected_ratings)
+#     if params[:ratings].nil?
+#       selected_ratings = @all_ratings
+#     else
+#       selected_ratings = params[:ratings].keys
+#     end
+#     @movie = Movie.with_ratings(selected_ratings)
     
   end
 
