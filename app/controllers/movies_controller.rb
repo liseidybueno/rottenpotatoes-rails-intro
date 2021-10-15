@@ -4,10 +4,21 @@ class MoviesController < ApplicationController
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
-    #@movies = 
   end
 
   def index
+    if params[:sort]
+      session[:sort] = params[:sort]
+    end
+    if params[:ratings]
+      session[:ratings] = params[:ratings]
+    end
+    if !(params[:sort])
+      params[:sort] = session[:sort]
+      params[:ratings] = session[:ratings]
+      redirect_to movies_path(sort: params[:sort], ratings: params[:ratings])
+    end
+    
     if params[:ratings].nil?
       @ratings_to_show = []
     else
