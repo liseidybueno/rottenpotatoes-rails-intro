@@ -8,7 +8,7 @@ class MoviesController < ApplicationController
 
   def index
     if params[:ratings].nil? && params[:sort].nil? && session[:ratings].nil? && session[:sort].nil?
-      redirect_to movies_path('ratings' => Hash[Movie.with_ratings(@all_ratings.map{|rating|[rating,1]}.to_h).order(session[:sort])])
+      redirect_to movies_path('ratings' => Hash[Movie.with_ratings(@all_ratings.map{|rating|[rating,1]}.to_h).order(params[:sort])])
       return
     end
     
