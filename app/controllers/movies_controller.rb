@@ -7,37 +7,36 @@ class MoviesController < ApplicationController
   end
 
   def index
-    if params[:sort]
-      session[:sort] = params[:sort]
-    end
-    if params[:ratings]
-      session[:ratings] = params[:ratings]
-    end
-    if !(params[:sort])
-      params[:sort] = session[:sort]
-      params[:ratings] = session[:ratings]
-      redirect_to movies_path(sort: params[:sort], ratings: params[:ratings])
-    end
-    
     if params[:ratings].nil?
-      @ratings_to_show = []
+      if session[:ratings].nil?
+        @ratings_to_show = []
+      else
+        @ratings_to_show = session[:ratings]
+      end
     else
       @ratings_to_show = params[:ratings].keys
     end
+
+    session[:ratings] = @ratings_to_show
     @all_ratings = Movie.all_ratings
-    @movies = Movie.with_ratings(@ratings_to_show).order(params[:sort])
-    @sort = params[:sort]
+
+    if params[:sort].nil?
+      @sort = session[:sort]
+     else
+      @sort = params[:sort]
+    end
+    session[:sort] = @sort
+
     if @sort === 'title'
       @css_title = 'hilite'
-      @movies = Movie.with_ratings(@ratings_to_show).order(params[:sort])
     elsif @sort === 'release_date'
       @css_rating = 'hilite'
-      @movies = Movie.with_ratings(@ratings_to_show).order(params[:sort])
     end
-    
+     
+    @movies = Movie.with_ratings(@ratings_to_show).order(@sort)
     @ratings_sorted = @ratings_to_show.map{|rating|[rating,1]}.to_h
   end
-
+  
   def new
     # default: render 'new' template
   end
