@@ -12,6 +12,7 @@ class MoviesController < ApplicationController
         @ratings_to_show = []
       else
         @ratings_to_show = session[:ratings]
+        #redirect
       end
     else
       @ratings_to_show = params[:ratings].keys
@@ -22,19 +23,31 @@ class MoviesController < ApplicationController
 
     if params[:sort].nil?
       @sort = session[:sort]
+      #redirect 
      else
       @sort = params[:sort]
     end
     session[:sort] = @sort
-
+      
     if @sort === 'title'
       @css_title = 'hilite'
     elsif @sort === 'release_date'
       @css_rating = 'hilite'
     end
-     
-    @movies = Movie.with_ratings(@ratings_to_show).order(@sort)
+    
     @ratings_sorted = @ratings_to_show.map{|rating|[rating,1]}.to_h
+    
+    if params[:ratings].nil? && params[:sort].nil? && session[:ratings].nil? && session[:sort].nil?
+      redirect_to movies_path('ratings' => Hash[Movie.with_ratings(@all_ratings.map{|rating|[rating,1]}.to_h).order(session[:sort])])
+      return
+    end
+    
+    @movies = Movie.with_ratings(@ratings_to_show).order(@sort)
+    
+    if params[:sort].nil?
+      redirect_to movies_path('ratings' => Hash[@ratings_sorted], 'sort' => @sort)
+      return
+    end
   end
   
   def new
